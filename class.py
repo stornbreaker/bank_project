@@ -1,4 +1,4 @@
-class Person:
+class Person(db.Model):
     __init__(self,firstName,lastName,accountNumber):
         self.firstName = firstName
         self.lastName = lastName
