@@ -29,7 +29,12 @@ def menu_employee():
     
     employee_PIN=request.form.get("employee_PIN")
     print(employee_PIN)
-    return render_template("menu_employee.html")
+    if employee_PIN == "A1234":
+        return render_template("menu_employee.html")
+    else:
+        return render_template("log_in_employee.html")
+    
+    
 
 
 
