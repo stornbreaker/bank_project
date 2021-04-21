@@ -1,0 +1,50 @@
+
+
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<h1 align = "center" >Log in</h1>
+    <form method="POST" action="./log_in_client" >
+        <table align = "center">
+            <tr>
+                <td>
+                    <p> first name</p>
+                </td>
+                <td>
+                    <input type="text" name="client_firstName">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p> last name</p>
+                </td>
+                <td>
+                    <input type="text" name="client_lastName">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p> account number</p>
+                </td>
+                <td>
+                    <input type="text" name="client_accountNumber">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p> PIN</p>
+                </td>
+                <td>
+                    <input type="text" name="client_PIN">
+                </td>
+            </tr>
+        </table>
+        <tr>
+            
+        </tr>
+    </form>
+{% endblock %}
