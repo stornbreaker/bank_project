@@ -13,5 +13,10 @@ def log_in():
 def log_in_client():
     return render_template("log_in_client.html")
 
+@app.route("/log_in_employee", methods =["GET","POST"] )
+def log_in_employee():
+    return render_template("log_in_employee.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
