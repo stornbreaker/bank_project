@@ -32,11 +32,12 @@ def menu_employee():
     if employee_PIN == "A1234":
         return render_template("menu_employee.html")
     else:
-        return render_template ("log_in_employee.html")
+        return render_template ("log_in_employee.html",message = "failed")
     
-    
+@app.route("/new_client", methods = ["POST"])
+def newClient():
+    return render_template("new_client.html")
 
-#test
 
 if __name__ == "__main__":
     app.run(debug=True)
