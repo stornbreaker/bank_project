@@ -16,6 +16,7 @@
         <th>account Number</th>
         <th>first Name</th>
         <th>last Name</th>
+        <th>PIN</th>
     </tr>
     {% for account in accounts %}
     <tr>
@@ -27,6 +28,9 @@
         </td>
         <td>
             {{account.lastName}}
+        </td>
+        <td> 
+            {{account.getPIN()}}
         </td>
         <td>
             <a href="/delete/{{account.accountNumber}}">Delete</a>

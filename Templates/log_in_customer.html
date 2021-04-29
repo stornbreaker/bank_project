@@ -8,22 +8,15 @@
 
 {% block body %}
 <h1 align = "center" >Log in</h1>
-    <form method="POST"  action="">
+    <form method="POST"  action="/menu_customer">
         <table align = "center">
-            <tr>
-                <td>
-                    <p> first name</p>
-                </td>
-                <td>
-                    <input type="text" name="client_firstName">
-                </td>
-            </tr>
+            
             <tr>
                 <td>
                     <p> last name</p>
                 </td>
                 <td>
-                    <input type="text" name="client_lastName">
+                    <input type="text" name="customer_lastName">
                 </td>
             </tr>
             <tr>
@@ -31,7 +24,7 @@
                     <p> account number</p>
                 </td>
                 <td>
-                    <input type="text" name="client_accountNumber">
+                    <input type="text" name="customer_accountNumber">
                 </td>
             </tr>
             <tr>
@@ -39,12 +32,13 @@
                     <p> PIN</p>
                 </td>
                 <td>
-                    <input type="text" name="client_PIN">
+                    <input type="text" name="customer_PIN">
                 </td>
             </tr>
         </table>
         <tr>
-            
+            <input type="submit" value="log in">
         </tr>
     </form>
+    <p align = "center"> {{message}} </p> 
 {% endblock %}
