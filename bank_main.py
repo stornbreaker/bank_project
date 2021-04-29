@@ -114,11 +114,8 @@ def menuCustomer():
     lastName = request.form['customer_lastName']
     accountNum = request.form['customer_accountNumber']
     PIN = request.form['customer_PIN']
-    print('a')
     account_customer = customer.query.get_or_404(accountNum)
-    print('b')
     if lastName == account_customer.lastName and PIN == account_customer.getPIN():
-        print("le log in est bon")
         return render_template("/menu_customer.html",customer = account_customer)
     return render_template("log_in_customer.html",message = "not fount try again")
 
