@@ -6,7 +6,9 @@ class Person(db.Model):
 
 class Client(Person):
     __init__(self,firstName,lastName,accountNumber,savingAccount,currentAccount):
-        super().__init__(self,firstName,lastName,accountNumber)
+        self.firstName = firstName
+        self.lastName = lastName
+        self.accountNumber = accountNumber
         self.savingAccount = savingAccount
         self.currentAccount = currentAccount
 

@@ -6,6 +6,23 @@ app = Flask(__name__)
 db = SQLAlchemy(app)
 
 
+    
+class customer(db.Model):
+    accountNumber = db.Column(db.String,nullable=False,primary_key=True)
+    firstName = db.Column(db.String,nullable= False)
+    lastName = db.Column(db.String,nullable=False)
+
+    def __init__(self,firstName,lastName,accountNumber):
+        
+        self.firstName = firstName
+        self.lastName = lastName
+        self.accountNumber = accountNumber
+
+
+
+    def __repr__(self):
+        return '<customer %s>' % self.accountNumber
+
 
 database_file = "sqlite:///bank.db"
 
@@ -15,9 +32,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 def log_in():
     return render_template("log_in.html")
 
-@app.route("/log_in_client", methods =["GET","POST"] )
-def log_in_client():
-    return render_template("log_in_client.html")
+@app.route("/log_in_customer", methods =["GET","POST"] )
+def log_in_customer():
+    return render_template("log_in_customer.html")
 
 @app.route("/log_in_employee", methods =["GET","POST"] )
 def log_in_employee():
@@ -30,14 +47,49 @@ def menu_employee():
     employee_PIN=request.form.get("employee_PIN")
     print(employee_PIN)
     if employee_PIN == "A1234":
-        return render_template("menu_employee.html")
+        accounts = customer.query.all()
+        return render_template("menu_employee.html",accounts= accounts)
     else:
         return render_template ("log_in_employee.html",message = "failed")
     
-@app.route("/new_client", methods = ["POST"])
-def newClient():
-    return render_template("new_client.html")
+@app.route("/new_customer", methods = ["POST"])
+def newCustomer():
+    if request.method == 'POST':
+        firstName = request.form['customer_firstName']
+        lastName = request.form['customer_lastName']
+        accountNum = request.form['customer_accountNumber']
+        newCos=customer(firstName=firstName,lastName=lastName,accountNumber= accountNum)
 
+
+        
+        try :
+            db.session.add(newCos)
+            db.session.commit()
+            accounts = customer.query.all()
+            return render_template("menu_employee.html",accounts= accounts)
+        except:
+            return "there was an issue"
+    
+
+    return render_template("new_customer.html")
+
+@app.route("/new_customerPage",methods  =['GET','POST'])
+def new_customerPage():
+    return render_template("new_customer.html")
+
+@app.route("/delete/<string:accNum>",methods = ['GET','POST'])
+def delete(accNum):
+    account_to_delete = customer.query.get_or_404('rys ')
+
+    try:
+        db.session.delete(account_to_delete)
+        db.session.commit()
+        accounts = customer.query.all()
+        return render_template("menu_employee.html",accounts= accounts)
+    except:
+        return "there was a issue"
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+

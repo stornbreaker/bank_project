@@ -7,9 +7,34 @@
 {% block body %}
 <h1 align = "center" >Employee</h1>
 
-<form method="POST" action="/new_client">
-    <input type="submit" value="new client">
+<form method="POST" action="/new_customerPage">
+    <input type="submit" value="new customer">
 </form>
 
+<table>
+    <tr>
+        <th>account Number</th>
+        <th>first Name</th>
+        <th>last Name</th>
+    </tr>
+    {% for account in accounts %}
+    <tr>
+        <td>
+            {{account.accountNumber}}
+        </td>
+        <td>
+            {{account.firstName}}
+        </td>
+        <td>
+            {{account.lastName}}
+        </td>
+        <td>
+            <a href="/delete/{{account.accountNumber}}">Delete</a>
+            <br>
+            <a href="">Update</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 
 {% endblock %}
