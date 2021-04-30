@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-<h2> Hello {{customer.firstName}} {{customer.lastName}}</h2>
+<h2> Name : {{customer.firstName}} {{customer.lastName}}</h2>
 <p>account number : {{customer.accountNumber}}</p>
 <table align="center" >
     <tr>
@@ -15,7 +15,7 @@
         <p>balance on saving account : {{customer.savingAccount}}</p>
     </tr>
 </table>
-<form action="/log_out">
-    <input type="submit" value="log out">
+<form method="POST"  action="/return_menu_employee">
+    <input type="submit" value="return">
 </form>
 {% endblock %}

@@ -35,10 +35,13 @@
         <td>
             <a href="/delete/{{account.accountNumber}}">Delete</a>
             <br>
-            <a href="">Update</a>
+            <a href="/description/{{account.accountNumber}}">description</a>
         </td>
     </tr>
     {% endfor %}
 </table>
+<form action="/log_out">
+    <input type="submit" value="log out">
+</form>
 
 {% endblock %}

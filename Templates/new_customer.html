@@ -24,26 +24,13 @@
                     <input type="text" name="customer_lastName">
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <p> account number</p>
-                </td>
-                <td>
-                    <input type="text" name="customer_accountNumber">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <p> PIN</p>
-                </td>
-                <td>
-                    <input type="text" name="customer_PIN">
-                </td>
-            </tr>
+            
         </table>
         <tr>
             <input type="submit" value="add">
         </tr>
     </form>
-
+    <form method="POST"  action="/return_menu_employee">
+        <input type="submit" value="return">
+    </form>
 {% endblock %}

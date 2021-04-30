@@ -1,11 +1,12 @@
 import os
 from flask import Flask,render_template,request,redirect
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
 
-
+list_trans = []
     
 class customer(db.Model):
     accountNumber = db.Column(db.String,nullable=False,primary_key=True)
@@ -41,11 +42,39 @@ class customer(db.Model):
 
         return initials + "-"+str(length) + "-" + "%02d-%02d" % (yy,zz)
 
+class transaction(db.Model):
+    id = db.Column(db.Integer,nullable=False,primary_key=True)
+    amount = db.Column(db.Integer,nullable=False)
+    customer_Num = db.Column(db.String,nullable = False)
+    account = db.Column(db.String,nullable=False)
+
+    def __init__(self, id, amount,customer,account):
+        self.id = id
+        self.amount = amount
+        self.customer_Num = customer 
+        self.account = account
+
+def getNumAcc(firstName,lastName):
+        alphabet="abcdefghijklmonpqrstuvwxyz"
+        nombre = range(1,27)
+        initials=firstName[0].lower() + lastName[0].lower()
+
+        length = len(firstName) + len(lastName)
+        ### find the numbers corresponding
+        yy = nombre[alphabet.index(firstName[0].lower())]
+        zz = nombre[alphabet.index(lastName[0].lower())]
+
+        return initials + "-"+str(length) + "-" + "%02d-%02d" % (yy,zz)
 
 
 database_file = "sqlite:///bank.db"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_file
+
+
+database_file2 = "sqlite:///transactions.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = database_file2
+
 
 @app.route("/", methods = ["GET","POST"])
 def log_in():
@@ -77,12 +106,9 @@ def newCustomer():
         firstName = request.form['customer_firstName']
         lastName = request.form['customer_lastName']
         
-
-        accountNum = request.form['customer_accountNumber']
+        accountNum = getNumAcc(firstName, lastName)
         newCos=customer(firstName=firstName,lastName=lastName,accountNumber= accountNum)
 
-
-        
         try :
             db.session.add(newCos)
             db.session.commit()
@@ -117,12 +143,18 @@ def menuCustomer():
     PIN = request.form['customer_PIN']
     account_customer = customer.query.get_or_404(accountNum)
     if lastName == account_customer.lastName and PIN == account_customer.getPIN():
-        return render_template("/menu_customer.html",customer = account_customer)
+        return render_template("menu_customer.html",customer = account_customer)
     return render_template("log_in_customer.html",message = "not fount try again")
 
+@app.route("/log_out")
+def logout():
+    return redirect("/")
 
+@app.route("/description/<string:accNum>",methods = ['GET'])
+def description(accNum):
+    account= customer.query.get_or_404(accNum)
 
-
+    return render_template("employee_view_customer.html",customer= account)
 
 
 if __name__ == "__main__":
