@@ -11,15 +11,16 @@ class customer(db.Model):
     accountNumber = db.Column(db.String,nullable=False,primary_key=True)
     firstName = db.Column(db.String,nullable= False)
     lastName = db.Column(db.String,nullable=False)
-    #currentAccount = db.Column(db.Integer, nullable=False)
-    #savingAccount = db.Column(db.Integer, nullable=False)
+    currentAccount = db.Column(db.Integer, nullable=False)
+    savingAccount = db.Column(db.Integer, nullable=False)
 
     def __init__(self,firstName,lastName,accountNumber):
         
         self.firstName = firstName
         self.lastName = lastName
         self.accountNumber = accountNumber
-
+        self.currentAccount = 0
+        self.savingAccount = 0
 
 
     def __repr__(self):
