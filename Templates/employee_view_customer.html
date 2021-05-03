@@ -7,13 +7,77 @@
 {% block body %}
 <h2> Name : {{customer.firstName}} {{customer.lastName}}</h2>
 <p>account number : {{customer.accountNumber}}</p>
-<table align="center" >
+<table >
     <tr>
-        <p>balance on current account : {{customer.currentAccount}}</p>
+        <td>
+            <p>balance on current account : {{customer.currentAccount}}</p>
+        </td>
+        
     </tr>
+    {% for current in currents %}
     <tr>
-        <p>balance on saving account : {{customer.savingAccount}}</p>
+        <form method='POST' action="/delete_tr/{{current[0]}}">
+            <td>
+                <p>{{current[1]}}</p>
+            </td>
+            
+            <td>
+                <input type="submit"  value="delete">
+            </td>
+        </form>
     </tr>
+        
+    {% endfor %}
+    <form method = "POST"  action="/new_transaction/{{customer.accountNumber}}/current">
+        <tr>
+            <td>
+                <p>  add transaction  :   amount :</p>
+            </td>
+            <td>
+                <input type="text" name="add_tr">
+            </td>
+            <td>
+                <input type="submit" value="add">
+            </td>
+        
+        </tr>
+    </form>
+    <tr>
+        <td>
+            <p>balance on saving account : {{customer.savingAccount}}</p>
+
+        </td>
+        
+    </tr>
+    {% for saving in savings %}
+    <tr>
+        <form method='POST' action="/delete_tr/{{saving[0]}}">
+            <td>
+                <p>{{saving[1]}}</p>
+            </td>
+            
+            <td>
+                <input type="submit"  value="delete">
+            </td>
+        </form>
+        
+    </tr>
+        
+    {% endfor %}
+    <form method = "POST"  action="/new_transaction/{{customer.accountNumber}}/saving">
+        <tr>
+            <td>
+                <p> add transaction   :   amount :</p>
+            </td>
+            <td>
+                <input type="text" name="add_tr">
+            </td>
+            <td>
+                <input type="submit" value="add">
+            </td>
+        
+        </tr>
+    </form>
 </table>
 <form method="POST"  action="/return_menu_employee">
     <input type="submit" value="return">

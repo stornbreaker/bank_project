@@ -6,8 +6,14 @@ from datetime import datetime
 app = Flask(__name__)
 db = SQLAlchemy(app)
 
-list_trans = []
-    
+
+database_file2 = "sqlite:///transactions.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = database_file2
+
+id_tr = 0 
+
+
+
 class customer(db.Model):
     accountNumber = db.Column(db.String,nullable=False,primary_key=True)
     firstName = db.Column(db.String,nullable= False)
@@ -67,13 +73,11 @@ def getNumAcc(firstName,lastName):
         return initials + "-"+str(length) + "-" + "%02d-%02d" % (yy,zz)
 
 
-database_file = "sqlite:///bank.db"
+#database_file = "sqlite:///bank.db"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = database_file
+#app.config["SQLALCHEMY_DATABASE_URI"] = database_file
 
 
-database_file2 = "sqlite:///transactions.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = database_file2
 
 
 @app.route("/", methods = ["GET","POST"])
@@ -86,14 +90,12 @@ def log_in_customer():
 
 @app.route("/log_in_employee", methods =["GET","POST"] )
 def log_in_employee():
-    print(1234)
     return render_template("log_in_employee.html")
 
 @app.route("/menu_employee", methods =["POST"] )
 def menu_employee():
     
     employee_PIN=request.form.get("employee_PIN")
-    print(employee_PIN)
     if employee_PIN == "A1234":
         accounts = customer.query.all()
         return render_template("menu_employee.html",accounts= accounts)
@@ -103,7 +105,7 @@ def menu_employee():
 @app.route("/new_customer", methods = ["POST"])
 def newCustomer():
     if request.method == 'POST':
-        firstName = request.form['customer_firstName']
+        firstName = request.form['customer_firstName'] 
         lastName = request.form['customer_lastName']
         
         accountNum = getNumAcc(firstName, lastName)
@@ -130,6 +132,9 @@ def delete(accNum):
 
     try:
         db.session.delete(account_to_delete)
+        for tr in transaction.query.all():
+            if tr.customer_Num == account_to_delete.accountNumber:
+                db.session.delete(tr)
         db.session.commit()
         accounts = customer.query.all()
         return render_template("menu_employee.html",accounts= accounts)
@@ -150,11 +155,61 @@ def menuCustomer():
 def logout():
     return redirect("/")
 
-@app.route("/description/<string:accNum>",methods = ['GET'])
+@app.route("/return_menu_employee",methods = ['POST'])
+def return_menue_employee():
+    accounts = customer.query.all()
+    return render_template("menu_employee.html",accounts= accounts)
+
+@app.route("/description/<string:accNum>",methods = ['GET','POST'])
 def description(accNum):
     account= customer.query.get_or_404(accNum)
+    currents,savings = [],[]
+    for tr in transaction.query.all():
+        if tr.customer_Num == accNum:
+            if tr.account == "current":
+                currents.append([tr.id,tr.amount])
+            else:
+                savings.append([tr.id,tr.amount])
+    
 
-    return render_template("employee_view_customer.html",customer= account)
+    return render_template("employee_view_customer.html",customer= account,currents= currents,savings = savings)
+
+@app.route("/new_transaction/<string:accNum>/<string:account>",methods = ['GET','POST'])
+def new_tr(accNum,account):
+    if request.method == 'POST':
+        taken_id = [tr.id for tr in transaction.query.all()]
+        id = 0
+        while (id in taken_id):
+            id+=1
+        amount = request.form['add_tr']
+        new_tr = transaction(id, amount, accNum, account)
+        cust = customer.query.get_or_404(accNum)
+        if account =='current':
+            cust.currentAccount = cust.currentAccount + int(amount)
+        else:
+            cust.savingAccount = cust.savingAccount + int(amount)
+        try :
+            db.session.add(new_tr)
+            db.session.commit()
+            return redirect("/description/"+accNum)
+        except:
+            return "there was an issue"
+    else:
+        return "there was a issue"
+
+
+@app.route("/delete_tr/<string:id>",methods=['GET','POST'])
+def delete_tr(id):
+    tr = transaction.query.get_or_404(id)
+    cust = customer.query.get_or_404(tr.customer_Num)
+    
+    db.session.delete(tr)
+    if tr.account =='current':
+        cust.currentAccount = cust.currentAccount - int(tr.amount)
+    else:
+        cust.savingAccount = cust.savingAccount - int(tr.amount)
+    db.session.commit()
+    return redirect("/description/"+cust.accountNumber)
 
 
 if __name__ == "__main__":
