@@ -7,13 +7,43 @@
 {% block body %}
 <h2> Hello {{customer.firstName}} {{customer.lastName}}</h2>
 <p>account number : {{customer.accountNumber}}</p>
-<table align="center" >
+<p>email : {{customer.email}}</p>
+<table >
     <tr>
-        <p>balance on current account : {{customer.currentAccount}}</p>
+        <td>
+            <p>balance on current account : {{customer.currentAccount}}</p>
+        </td>
+        
     </tr>
+    {% for current in currents %}
     <tr>
-        <p>balance on saving account : {{customer.savingAccount}}</p>
+        <td>
+            <p>{{current[1]}}</p>
+        </td>
     </tr>
+        
+    {% endfor %}
+    
+    <tr>
+        <td>
+            <p>balance on saving account : {{customer.savingAccount}}</p>
+
+        </td>
+        
+    </tr>
+    {% for saving in savings %}
+    <tr>
+        
+        <td>
+            <p>{{saving[1]}}</p>
+        </td>
+            
+        
+        
+    </tr>
+        
+    {% endfor %}
+    
 </table>
 <form action="/log_out">
     <input type="submit" value="log out">
