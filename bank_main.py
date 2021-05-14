@@ -162,12 +162,14 @@ def delete(accNum):
     
 
 @app.route("/menu_customer",methods = ['GET','POST'])
-#this function will lead to the menu
+#this function will lead to the menu of a customer
 def menu_customer():
+    #first we check if the customer have his codes to access his account after we get information from the log in page
     lastName = request.form['customer_lastName']
     accNum = request.form['customer_accountNumber']
     PIN = request.form['customer_PIN']
     account= customer.query.get_or_404(accNum)
+    #we begin to prepare the infomatios of the account as the transactions on the saving and current account
     currents,savings = [],[]
     for tr in transaction.query.all():
         if tr.customer_Num == accNum:
@@ -175,22 +177,28 @@ def menu_customer():
                 currents.append([tr.id,tr.amount])
             else:
                 savings.append([tr.id,tr.amount])
+    #then if codes are ok, we will display the page with informations that we querried before
     if lastName == account.lastName and PIN == account.getPIN():
         return render_template("menu_customer.html",customer = account,currents= currents,savings = savings)
     return render_template("log_in_customer.html",message = "not fount try again")
 
 @app.route("/log_out")
+#this function will simply redirect to the first page and to leaving the current customer or employee account
 def logout():
     return redirect("/")
 
 @app.route("/return_menu_employee",methods = ['POST'])
+#this function will rediect the employee to the menu_employee page
 def return_menue_employee():
     accounts = customer.query.all()
     return render_template("menu_employee.html",accounts= accounts)
 
 @app.route("/description/<string:accNum>",methods = ['GET','POST'])
+#this function will show a more precise description of a account to the employee. the account number is given in the route
 def description(accNum,message = ''):
     account= customer.query.get_or_404(accNum)
+    #after getting the account the employee want to see, we prepare transactions that rely on this account number 
+    # and are sort in function of the account it depends on.
     currents,savings = [],[]
     for tr in transaction.query.all():
         if tr.customer_Num == accNum:
@@ -203,16 +211,19 @@ def description(accNum,message = ''):
     return render_template("employee_view_customer.html",customer= account,currents= currents,savings = savings,message = message)
 
 @app.route("/new_transaction/<string:accNum>/<string:account>",methods = ['GET','POST'])
+#this function will create a new transaction
 def new_tr(accNum,account):
     if request.method == 'POST':
+        #first we choose a id that is free
         taken_id = [tr.id for tr in transaction.query.all()]
         id = 0
         while (id in taken_id):
             id+=1
         amount = request.form['add_tr']
         new_tr = transaction(id, amount, accNum, account)
+        #now we get the customer
         cust = customer.query.get_or_404(accNum)
-
+        #Then we write on the text document the transaction
         f = open('./customers/%s-%ss.txt' % (cust.accountNumber,account),'a')
         f.write('\n%s\t%s\t%s'  % (id,'01-01-01',amount))
         f.close()
@@ -238,10 +249,12 @@ def new_tr(accNum,account):
 
 
 @app.route("/delete_tr/<string:id>",methods=['GET','POST'])
+#this function will delete a transaction
 def delete_tr(id):
+    #we find the transaction and the cstomer
     tr = transaction.query.get_or_404(id)
     cust = customer.query.get_or_404(tr.customer_Num)
-    
+    #then we delete the transaction and change the account of the customer
     db.session.delete(tr)
     if tr.account =='current':
         cust.currentAccount = cust.currentAccount - int(tr.amount)
